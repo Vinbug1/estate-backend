@@ -8,15 +8,21 @@ This will help a developer start from 100 instead of 0
 - [ ] Authentication 
 - [ ] Verification Code
 - [ ] Authorization
+- [ ] Healthcheck
+- [ ] Payment integration
+  - [ ] Stripe
+  - [ ] Paystack
+  - [ ] Flutterwave
 - [ ] Database
   - [ ] Postgres
   - [ ] MongoDB
-- [ ] Docker
+- [x] Docker
 - [ ] Redis
 - [ ] ORM
   - [ ] Prisma
   - [ ] Sequelize
 - [ ] Email
+  - [ ] Mailgun
 - [ ] SMS
 - [ ] JWT
 - [ ] Logging
