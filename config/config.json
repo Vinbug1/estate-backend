@@ -1,0 +1,26 @@
+{
+    "development": {
+      "username": "dev-user",
+      "password": "dev-password",
+      "database": "dev_database",
+      "host": "localhost",
+      "port": 5432,
+      "dialect": "postgres"
+    },
+    "test": {
+      "username": "test-user",
+      "password": "test-password",
+      "database": "test_database",
+      "host": "localhost",
+      "port": 5432,
+      "dialect": "postgres"
+    },
+    "production": {
+      "username": "pord-user",
+      "password": "pord-password",
+      "database": "pord_database",
+      "host": "localhost",
+      "port": 5432,
+      "dialect": "postgres"
+    }
+  }
