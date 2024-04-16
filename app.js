@@ -1,41 +1,71 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const http = require('http');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+//const corsOptions = { origin: ['https://az-gray-express.netlify.app','http://localhost:3000'],credentials: true };
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const app = express();
+const server = http.createServer(app);
 
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(logger('dev'));
+app.use(cors());
+//app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan('tiny'));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// JWT Authentication
+const authJwt = require('./helpers/jwt');
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// Apply JWT authentication middleware only to routes that require it
+const secureRoutes = express.Router();
+secureRoutes.use(authJwt());
+
+// Routes
+const api = process.env.API_URL;
+app.use(`${api}/users`, require('./routes/users'));
+
+// Swagger setup
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Slashpoint API documentation',
+      version: '1.0.0',
+      description: 'This is a simple CRUD API application made with node.js,Express and documented with Swagger.',
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+      },
+    ],
+
+  },
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec,{explorer: true}));
+
+// Error handling
+const errorHandler = require('./helpers/error-handler.js');
+app.use(errorHandler);
+
+// Database Connection
+const mongoURI = process.env.NODE_ENV === 'production' ? process.env.PROD_MONGO_URI : process.env.DEV_MONGO_URI;
+
+mongoose.connect(mongoURI, {
+  dbName: 'slashpoint-db',
+}).then(() => {
+  console.log('Database Connection is ready...');
+}).catch((error) => {
+  console.error('Database Connection Error:', error);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+// Start the server
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
-
-module.exports = app;
