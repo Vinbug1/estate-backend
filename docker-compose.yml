@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  # Node API service
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+
+  # MySQL database container
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: appAdmin25#
+      MYSQL_DATABASE: appAdmindb
+      MYSQL_USER: appAdmin23
+      MYSQL_PASSWORD: app25
+
+    ports:
+      - "3306:3306"
+
