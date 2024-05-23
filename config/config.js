@@ -1,19 +1,11 @@
 module.exports = {
-    development: {
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      host: process.env.DB_HOST,
-      dialect: 'mysql',
-      port: process.env.DB_PORT,
-    },
-    production: {
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      host: process.env.DB_HOST,
-      dialect: 'mysql',
-      port: process.env.DB_PORT,
-    },
-  };
-  
+  development: {
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
+  },
+  // Other environments (test, production) would be similarly configured
+};
