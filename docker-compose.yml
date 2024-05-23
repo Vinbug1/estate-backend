@@ -1,24 +1,30 @@
 version: '3.8'
 services:
-  # Node API service
   api:
     build: 
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:80"
+      - "3001:3001"
     depends_on:
-      - mysql
-
-  # MySQL database container
-  mysql:
-    image: mysql:latest
+      - postgres
     environment:
-      MYSQL_ROOT_PASSWORD: appAdmin25#
-      MYSQL_DATABASE: appAdmindb
-      MYSQL_USER: appAdmin23
-      MYSQL_PASSWORD: app25
+      - DB_HOST=192.168.16.2
+      - DB_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - SECRET=${SECRET}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
 
+  postgres:
+    image: postgres:latest
+    env_file:
+      - .env
     ports:
-      - "3306:3306"
-
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

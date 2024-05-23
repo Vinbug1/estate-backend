@@ -1,85 +1,41 @@
-const { DataTypes } = require('sequelize');
-const bcrypt = require('bcryptjs');
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
+      fullName: {
+          type: DataTypes.STRING,
+          allowNull: false,
+      },
+      email: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          unique: true,
+      },
+      password: {
+          type: DataTypes.STRING,
+          allowNull: false,
+      },
+      phone: {
+          type: DataTypes.STRING,
+      },
+      address: {
+          type: DataTypes.STRING,
+      },
+      occupation: {
+          type: DataTypes.STRING,
+      },
+      role: {
+          type: DataTypes.STRING,
+          defaultValue: 'user',
+      },
+      pin: {
+          type: DataTypes.STRING,
+      },
+      pinExpiry: {
+          type: DataTypes.DATE,
+      },
+  });
 
-const User = sequelize.define('User', {
-  fullName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true, // Ensure the field is not empty
-    },
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true, // Ensure the email is valid
-      notEmpty: true, // Ensure the field is not empty
-    },
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      len: [6, 100], // Ensure password is at least 6 characters long
-      notEmpty: true, // Ensure the field is not empty
-    },
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true, // Ensure the field is not empty
-      isNumeric: true, // Ensure the phone contains only numbers
-    },
-  },
-  address: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true, // Ensure the field is not empty
-    },
-  },
-  occupation: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true, // Ensure the field is not empty
-    },
-  },
-  role: {
-    type: DataTypes.ENUM('employee', 'manager', 'admin'),
-    allowNull: false,
-    validate: {
-      isIn: [['employee', 'manager', 'admin']], // Ensure the role is one of the specified values
-      notEmpty: true, // Ensure the field is not empty
-    },
-  },
-}, {
-  hooks: {
-    beforeCreate: async (user) => {
-      if (user.password) {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
-      }
-    },
-    beforeUpdate: async (user) => {
-      if (user.password && user.changed('password')) { // Only hash the password if it was changed
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
-      }
-    },
-  },
-});
-
-// Instance method to validate password
-User.prototype.validPassword = async function(password) {
-  return await bcrypt.compare(password, this.password);
+  return User;
 };
-
-module.exports = User;
-
 
 
 

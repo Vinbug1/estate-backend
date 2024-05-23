@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 require('dotenv').config();
 const userRouter = require('./routes/users');
 const errorHandler = require('./middleware/error-handler');
-const db = require('./index'); // Import Sequelize instance and models
+const db = require('./index'); // Adjusted import to point to the Sequelize models
 
 // Initialize express app
 const app = express();
@@ -58,7 +58,7 @@ db.sequelize.authenticate()
         console.log('Database synced successfully.');
 
         // Start the server
-        const port = process.env.PORT || 3000;
+        const port = process.env.PORT || 3001;
         server.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
         });
@@ -70,6 +70,7 @@ db.sequelize.authenticate()
 
 // Export the app for testing
 module.exports = app;
+
 
 
 
