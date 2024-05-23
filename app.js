@@ -53,8 +53,7 @@ db.sequelize.authenticate()
 
         // Sync models
         return db.sequelize.sync();
-    })
-    .then(() => {
+    }).then(() => {
         console.log('Database synced successfully.');
 
         // Start the server
@@ -62,8 +61,7 @@ db.sequelize.authenticate()
         server.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
         });
-    })
-    .catch(error => {
+    }).catch(error => {
         console.error('Unable to connect to the database:', error);
         process.exit(1); // Exit the process with failure
     });
