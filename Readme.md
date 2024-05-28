@@ -9,7 +9,7 @@ This will help a developer start from 100 instead of 0
 - [ ] Verification Code
 - [ ] Authorization
 - [ ] Database
-  - [ ] Postgres
+  - [v] Postgres
   - [ ] MongoDB
 - [ ] Docker
 - [ ] Redis
