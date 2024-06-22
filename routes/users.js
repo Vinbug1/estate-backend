@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const rbacMiddleware = require('../middleware/rbacMiddleware');
-const authController = require('../controllers/authController');
+const { getAllUser, getUserById, updateUserById, deleteUserById, getUserCount } = require('../controllers/userController');
+// const { verifyToken } = require('../middlewares/authMiddleware'); // Assuming you have an auth middleware for verifying JWT
 
 /**
  * @swagger
@@ -252,17 +252,58 @@ const authController = require('../controllers/authController');
  *         description: Some server error
  */
 
-router.post('/users', authController.registerUser);
-router.get('/users', rbacMiddleware.checkPermission('read_user'), authController.getAllUsers);
-router.get('/users/:id', authController.getUserById);
-router.put('/users/:id', rbacMiddleware.checkPermission('update_user'), authController.updateUserById);
-router.delete('/users/:id', rbacMiddleware.checkPermission('delete_user'), authController.deleteUserById);
-router.get('/users/count', rbacMiddleware.checkPermission('count_user'), authController.getUserCount);
-router.post('/users/verify-pin', rbacMiddleware.checkPermission('count_users_pin'), authController.verifyPin);
-router.post('/users/forgot-password', rbacMiddleware.checkPermission('forgot_user_password'), authController.forgotPassword);
-router.post('/users/reset-password', rbacMiddleware.checkPermission('reset_user_password'), authController.resetPassword);
+
+// GET /api/users
+router.get('/', getAllUser);
+
+// GET /api/users/:id
+router.get('/:id', getUserById);
+
+// PUT /api/users/:id
+router.put('/:id',  updateUserById); // Protected route example
+
+// DELETE /api/users/:id
+router.delete('/:id', deleteUserById); // Protected route example
+
+// GET /api/users/count
+router.get('/count', getUserCount);
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const express = require('express');
+// const router = express.Router();
+// const rbacMiddleware = require('../middleware/rbacMiddleware');
+// const authController = require('../controllers/authController');
+
+
+// router.post('/users', authController.registerUser);
+// router.get('/users', rbacMiddleware.checkPermission('read_user'), authController.getAllUsers);
+// router.get('/users/:id', authController.getUserById);
+// router.put('/users/:id', rbacMiddleware.checkPermission('update_user'), authController.updateUserById);
+// router.delete('/users/:id', rbacMiddleware.checkPermission('delete_user'), authController.deleteUserById);
+// router.get('/users/count', rbacMiddleware.checkPermission('count_user'), authController.getUserCount);
+// router.post('/users/verify-pin', rbacMiddleware.checkPermission('count_users_pin'), authController.verifyPin);
+// router.post('/users/forgot-password', rbacMiddleware.checkPermission('forgot_user_password'), authController.forgotPassword);
+// router.post('/users/reset-password', rbacMiddleware.checkPermission('reset_user_password'), authController.resetPassword);
+
+// module.exports = router;
 
 
 

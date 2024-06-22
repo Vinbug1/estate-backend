@@ -1,17 +1,18 @@
-const roles = require('../config/roles.json');
+module.exports = (sequelize, DataTypes) => {
+  const Role = sequelize.define('Role', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+  }, {
+    timestamps: true, // Enable timestamps
+  });
 
-class Role {
-  constructor() {
-    this.roles = roles.roles;
-  }
+  Role.associate = (models) => {
+    Role.hasMany(models.User, { foreignKey: 'roleId' });
+    Role.belongsToMany(models.Permission, { through: 'RolePermissions' });
+  };
 
-  getRoleByName(name) {
-    return this.roles.find((role) => role.name === name);
-  }
-
-  getRoles() {
-    return this.roles;
-  }
-}
-
-module.exports = Role;
+  return Role;
+};

@@ -4,10 +4,11 @@ const cors = require('cors');
 const http = require('http');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-require('dotenv').config();
-const userRouter = require('./routes/users');
-const errorHandler = require('./middleware/error-handler');
-const db = require('./index'); // Adjusted import to point to the Sequelize models
+const dotenv = require('dotenv');
+const db = require('./models'); // Assuming your Sequelize models are in the ./models directory
+const errorHandler = require('./middlewares/error-handler');
+
+dotenv.config();
 
 // Initialize express app
 const app = express();
@@ -16,58 +17,217 @@ const server = http.createServer(app);
 // Middleware setup
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('tiny'));
 
 // Routes
-const api = process.env.API_URL || '/api';
-app.use(`${api}/users`, userRouter);
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
 
 // Swagger setup
 const swaggerOptions = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Slashpoint API documentation',
-            version: '1.0.0',
-            description: 'This is a simple CRUD API application made with Node.js, Express, and documented with Swagger.',
-        },
-        servers: [
-            {
-                url: "http://localhost:3000",
-            },
-        ],
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Your API Documentation',
+      version: '1.0.0',
+      description: 'This is a simple CRUD API application made with Node.js, Express, and documented with Swagger.',
     },
-    apis: ['./routes/*.js'], // Path to the API docs
+    servers: [
+      {
+        url: "http://localhost:3000", // Adjust the URL as per your setup
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // Path to the API route files
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 
-// Error handling
+// Error handling middleware
 app.use(errorHandler);
 
 // Ensure database connection is successful before starting the server
 db.sequelize.authenticate()
-    .then(() => {
-        console.log('Database connection has been established successfully.');
+  .then(() => {
+    console.log('Database connection has been established successfully.');
 
-        // Sync models
-        return db.sequelize.sync();
-    }).then(() => {
-        console.log('Database synced successfully.');
+    // Sync models (optional step, only needed if you have associations or migrations)
+    return db.sequelize.sync();
+  }).then(() => {
+    console.log('Database synced successfully.');
 
-        // Start the server
-        const port = process.env.PORT || 3001;
-        server.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
-        });
-    }).catch(error => {
-        console.error('Unable to connect to the database:', error);
-        process.exit(1); // Exit the process with failure
+    // Start the server
+    //const port = process.env.PORT || 3002;
+    const port = 3002;
+    server.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
     });
+  }).catch(error => {
+    console.error('Unable to connect to the database:', error);
+    process.exit(1); // Exit the process with failure
+  });
 
-// Export the app for testing
+// Export the app for testing or other modules
 module.exports = app;
+
+
+
+// const express = require('express');
+// const morgan = require('morgan');
+// const cors = require('cors');
+// const http = require('http');
+// const swaggerJsdoc = require('swagger-jsdoc');
+// const swaggerUi = require('swagger-ui-express');
+// const dotenv = require('dotenv');
+// const db = require('./models'); // Adjusted import to point to the Sequelize models
+// const errorHandler = require('./middlewares/error-handler');
+
+// dotenv.config();
+
+// // Initialize express app
+// const app = express();
+// const server = http.createServer(app);
+
+// // Middleware setup
+// app.use(cors());
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(morgan('tiny'));
+
+// // Routes
+// app.use('/api/auth', require('./routes/auth'));
+// app.use('/api/users', require('./routes/users'));
+
+// // Swagger setup
+// const swaggerOptions = {
+//   definition: {
+//     openapi: '3.0.0',
+//     info: {
+//       title: 'Slashpoint API documentation',
+//       version: '1.0.0',
+//       description: 'This is a simple CRUD API application made with Node.js, Express, and documented with Swagger.',
+//     },
+//     servers: [
+//       {
+//         url: "http://localhost:3000", // Adjust the URL as per your setup
+//       },
+//     ],
+//   },
+//   apis: ['./routes/*.js'], // Path to the API docs
+// };
+
+// const swaggerSpec = swaggerJsdoc(swaggerOptions);
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+
+// // Error handling middleware
+// app.use(errorHandler);
+
+// // Ensure database connection is successful before starting the server
+// db.sequelize.authenticate()
+//   .then(() => {
+//     console.log('Database connection has been established successfully.');
+
+//     // Sync models
+//     return db.sequelize.sync();
+//   }).then(() => {
+//     console.log('Database synced successfully.');
+
+//     // Start the server
+//     const port = process.env.PORT || 3000;
+//     server.listen(port, () => {
+//       console.log(`Server is running on http://localhost:${port}`);
+//     });
+//   }).catch(error => {
+//     console.error('Unable to connect to the database:', error);
+//     process.exit(1); // Exit the process with failure
+//   });
+
+// // Export the app for testing or other modules
+// module.exports = app;
+
+
+
+
+
+
+
+
+
+
+
+
+// const express = require('express');
+// const morgan = require('morgan');
+// const cors = require('cors');
+// const http = require('http');
+// const swaggerJsdoc = require('swagger-jsdoc');
+// const swaggerUi = require('swagger-ui-express');
+// require('dotenv').config();
+// const userRouter = require('./routes/users');
+// const errorHandler = require('./middleware/error-handler');
+// const db = require('./index'); // Adjusted import to point to the Sequelize models
+
+// // Initialize express app
+// const app = express();
+// const server = http.createServer(app);
+
+// // Middleware setup
+// app.use(cors());
+// app.use(express.json());
+// app.use(morgan('tiny'));
+
+// // Routes
+// const api = process.env.API_URL || '/api';
+// app.use(`${api}/users`, userRouter);
+
+// // Swagger setup
+// const swaggerOptions = {
+//     definition: {
+//         openapi: '3.0.0',
+//         info: {
+//             title: 'Slashpoint API documentation',
+//             version: '1.0.0',
+//             description: 'This is a simple CRUD API application made with Node.js, Express, and documented with Swagger.',
+//         },
+//         servers: [
+//             {
+//                 url: "http://localhost:3000",
+//             },
+//         ],
+//     },
+//     apis: ['./routes/*.js'], // Path to the API docs
+// };
+
+// const swaggerSpec = swaggerJsdoc(swaggerOptions);
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+
+// // Error handling
+// app.use(errorHandler);
+
+// // Ensure database connection is successful before starting the server
+// db.sequelize.authenticate()
+//     .then(() => {
+//         console.log('Database connection has been established successfully.');
+
+//         // Sync models
+//         return db.sequelize.sync();
+//     }).then(() => {
+//         console.log('Database synced successfully.');
+
+//         // Start the server
+//         const port = process.env.PORT || 3001;
+//         server.listen(port, () => {
+//             console.log(`Server is running on http://localhost:${port}`);
+//         });
+//     }).catch(error => {
+//         console.error('Unable to connect to the database:', error);
+//         process.exit(1); // Exit the process with failure
+//     });
+
+// // Export the app for testing
+// module.exports = app;
 
 
 

@@ -1,30 +1,294 @@
 version: '3.8'
+
 services:
   api:
     build: 
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3001:${PORT}"
+      - "3002:3002"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
+      - DB_HOST=postgres
+      - DB_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - SECRET=${SECRET}
-      - EMAIL_USER=${EMAIL_USER}
-      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+    networks:
+      - backend
 
   postgres:
     image: postgres:latest
-    env_file:
-      - .env
+    
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:${DB_PORT}"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+
+
+
+# version: '3.8'
+
+# services:
+#   api:
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:3000"  # Forward port 3001 on host to port 3000 on container
+#     depends_on:
+#       - postgres
+#     environment:
+#       - DB_HOST=${DB_HOST}
+#       - DB_PORT=${DB_PORT}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - SECRET=${SECRET}
+#       - EMAIL_USER=${EMAIL_USER}
+#       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+
+#   postgres:
+#     image: postgres:latest
+#     env_file:
+#       - .env  # Load environment variables from .env file
+#     ports:
+#       - "5432:5432" # Forward port 5432 on host to DB_PORT on container
+#     environment:
+#       POSTGRES_DB: ${POSTGRES_DB}
+#       POSTGRES_USER: ${POSTGRES_USER}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+
+
+# version: '3.8'
+
+# services:
+#   api:
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:${PORT}"
+#     depends_on:
+#       - postgres
+#     environment:
+#       - DB_HOST=${DB_HOST}
+#       - DB_PORT=${DB_PORT}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - SECRET=${SECRET}
+#       - EMAIL_USER=${EMAIL_USER}
+#       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+
+#   postgres:
+#     image: postgres:latest
+#     env_file:
+#       - .env
+#     ports:
+#       - "5432:${DB_PORT}"
+#     environment:
+#       POSTGRES_DB: ${POSTGRES_DB}
+#       POSTGRES_USER: ${POSTGRES_USER}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+
+
+
+
+
+
+
+
+
+
+# version: '3.8'
+
+# services:
+#   api:
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:${PORT}"
+#     depends_on:
+#       - postgres
+#     environment:
+#       - DB_HOST=${DB_HOST}
+#       - DB_PORT=${DB_PORT}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - SECRET=${SECRET}
+#       - EMAIL_USER=${EMAIL_USER}
+#       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+
+#   postgres:
+#     image: postgres:latest
+#     env_file:
+#       - .env
+#     ports:
+#       - "5432:${DB_PORT}"
+#     environment:
+#       POSTGRES_DB: ${POSTGRES_DB}
+#       POSTGRES_USER: ${POSTGRES_USER}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# version: "3.9"
+# services:
+#   dbpostgres:
+#     image: postgres:latest
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#     ports: 
+#       - '5432:5432'
+#     volumes:
+#       - estate-backend-db:/var/lib/postgresql/data
+
+#   # redis:
+#   #   image: redis:latest
+#   #   ports:
+#   #     - '6379:6379'
+
+#   api:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     environment:
+#       DB_SCHEMA: postgres
+#       DB_USER: postgres
+#       DB_PASSWORD: postgres
+#       DB_HOST: db-postgres
+#       REDIS_HOST: redis
+#       REDIS_PORT: 6379
+#     depends_on:
+#       - dbpostgres
+#       #- redis
+#     ports:
+#       - '3000:3000'
+
+
+
+
+
+
+
+
+
+
+
+# version: "3.9"
+# services:
+#   db-postgres:
+#     image: postgres:latest
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#     ports: 
+#       - '5432:5432'
+#     volumes:
+#       - estate-backend-db:/var/lib/postgresql/data
+
+#   redis:
+#     image: redis:latest
+#     ports:
+#       - '6379:6379'
+
+#   api:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile  # Path to your Node.js application's Dockerfile
+#     environment:
+#       DB_SCHEMA: postgres
+#       DB_USER: postgres
+#       DB_PASSWORD: postgres
+#       DB_HOST: postgres
+#       REDIS_HOST: redis
+#       REDIS_PORT: 6379
+#       # Add any other environment variables needed for your email service
+#     depends_on:
+#       - db-postgres
+#       - redis
+#     ports:
+#       - '3000:3000'
+
+
+
+
+
+
+
+
+
+
+
+
+# version: '3.8'
+# services:
+#   api:
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3001:${PORT}"
+#     depends_on:
+#       - postgres
+#     environment:
+#       - DB_HOST=${DB_HOST}
+#       - DB_PORT=${DB_PORT}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - SECRET=${SECRET}
+#       - EMAIL_USER=${EMAIL_USER}
+#       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+
+#   postgres:
+#     image: postgres:latest
+#     env_file:
+#       - .env
+#     ports:
+#       - "5432:${DB_PORT}"
+#     environment:
+#       POSTGRES_DB: ${POSTGRES_DB}
+#       POSTGRES_USER: ${POSTGRES_USER}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

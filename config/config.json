@@ -1,0 +1,32 @@
+{
+  "development": {
+    "username": "myadmin",
+    "password": "myestate45",
+    "database": "estatedb",
+    "host": "postgres",
+    "dialect": "postgres",
+    "define": {
+      "timestamps": true
+    }
+  },
+  "test": {
+    "username": "myadmin",
+    "password": "myestate45",
+    "database": "estatedb",
+    "host": "postgres",
+    "dialect": "postgres",
+    "define": {
+      "timestamps": true
+    }
+  },
+  "production": {
+    "username": "myadmin",
+    "password": "myestate45",
+    "database": "estatedb",
+    "host": "postgres",
+    "dialect": "postgres",
+    "define": {
+      "timestamps": true
+    }
+  }
+}
